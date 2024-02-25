@@ -12,3 +12,6 @@ spring:
       enabled: true
       settings.trace: false
       settings.web-allow-others: false
+  application:
+    name: housing-app
+
