@@ -38,21 +38,20 @@ Feature: Customers endpoints
       | 201    | 200      | 1     | 0                 | johndoeNoMail.json     |
 
   Scenario Outline: Add new customer error cases
-    Given I have <numberOfCustomers> customers in database
+    Given I have 0 customers in database
     When I send a 'POST' request to '/api/customers' with body '<file>'
     Then I should get <status> status code
-    When I send a 'GET' request to '/api/customers'
-    Then I should get <status2> status code
-    Then the customers returned should be <count>
+    And I should get error message '<errorMessage>'
+
     Examples:
-      | status | status2  | count | numberOfCustomers | file                               |
-      | 400    | 200      | 0     | 0                 | johndoeWithoutEmailOrAddress.json |
-      | 400    | 200      | 0     | 0                 | johndoeUnderAge.json              |
-      | 400    | 200      | 0     | 0                 | johndoeNoAge.json                 |
-      | 400    | 200      | 0     | 0                 | johnNoLastName.json               |
-      | 400    | 200      | 0     | 0                 | doeNoFirstName.json               |
-      | 400    | 200      | 0     | 0                 | invalid.json                      |
-      | 400    | 200      | 0     | 0                 | johndoeInvalidMail.json           |
+      | status  | file                               | errorMessage |
+      | 400     | johndoeWithoutEmailOrAddress.json | Either email or address must be present |
+      | 400     | johndoeUnderAge.json              | Age must be 18 or older                 |
+      | 400     | johndoeNoAge.json                 | Age must be 18 or older                 |
+      | 400     | johnNoLastName.json               | Last name cannot be empty               |
+      | 400     | doeNoFirstName.json               | First name cannot be empty              |
+      | 400     | invalid.json                      |                                         |
+      | 400     | johndoeInvalidMail.json           | Invalid email format                    |
 
 
   Scenario Outline: Add new customer twice
@@ -82,13 +81,15 @@ Feature: Customers endpoints
     Then I should get <status> status code
     And I should get error message '<errorMessage>'
     Examples:
-      | status | file                  | errorMessage                             |
-      | 400    | janedoe.json         | Email already in use by another customer |
-      | 400    | johndoeUnderAge.json | Age must be 18 or older                  |
-      | 400    | johndoeNoAge.json    | Age must be 18 or older                  |
-      | 400    | johnNoLastName.json  | Last name cannot be empty                |
-      | 400    | doeNoFirstName.json  | First name cannot be empty               |
-      | 400    | invalid.json         |                                  |
+      | status | file                     | errorMessage                             |
+      | 400    | janedoe.json            | Email already in use by another customer |
+      | 400    | johndoeUnderAge.json    | Age must be 18 or older                  |
+      | 400    | johndoeNoAge.json       | Age must be 18 or older                  |
+      | 400    | johnNoLastName.json     | Last name cannot be empty                |
+      | 400    | doeNoFirstName.json     | First name cannot be empty               |
+      | 400    | invalid.json            |                                          |
+      | 400    | johndoeInvalidMail.json | Invalid email format                     |
+
 
   Scenario Outline: Search customers
     Given I have John Doe and Jane Doe in the database
