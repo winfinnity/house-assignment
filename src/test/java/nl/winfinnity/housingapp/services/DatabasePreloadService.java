@@ -1,6 +1,5 @@
 package nl.winfinnity.housingapp.services;
 
-
 import nl.winfinnity.housingapp.models.Customer;
 import nl.winfinnity.housingapp.repository.CustomerRepository;
 import org.slf4j.Logger;

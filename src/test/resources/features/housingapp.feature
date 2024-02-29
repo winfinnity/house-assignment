@@ -89,9 +89,16 @@ Feature: Customers endpoints
 
   Scenario Outline: Search customers
     Given I have John Doe and Jane Doe in the database
-    When I send a 'GET' request to <endpoint> with query '<query>'
+    When I send a 'GET' request to '/api/customers/search' with query '<query>'
     Then I should get <status> status code
     Then the customers returned should be <count>
     Examples:
-      | query              | status | count | endpoint |
-      |                    | 200    | 10    | /api/customers/search?name=John |
+      | query                          | status | count |
+      | ?firstname=John                 | 200    | 1     |
+      | ?lastname=Doe                  | 200    | 2     |
+      | ?firstname=jane&lastname=doe    | 200    | 1     |
+      |                                | 200    | 2     |
+      | ?firstname=donotexist           | 200    | 0     |
+
+
+
