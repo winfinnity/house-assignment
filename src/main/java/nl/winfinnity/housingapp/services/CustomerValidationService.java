@@ -17,7 +17,7 @@ public class CustomerValidationService {
             throw new InvalidInputException("Last name cannot be empty");
         }
 
-        if (customer.getEmail() == null || !customer.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        if (customer.getEmail() !=null && !customer.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new InvalidInputException("Invalid email format");
         }
 
@@ -29,6 +29,5 @@ public class CustomerValidationService {
         }
         return customer;
     }
-
 
 }

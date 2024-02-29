@@ -1,0 +1,14 @@
+{
+  "firstname": "John",
+  "lastname": "Doe",
+  "email": "james.doe@example.com",
+  "addresses": [
+    {
+      "street": "straat",
+      "number": "1",
+      "postalCode": "2343fd",
+      "city": "utrecht",
+      "country": "nl"
+    }
+  ]
+}

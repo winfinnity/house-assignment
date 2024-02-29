@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomerService {
 
@@ -23,41 +25,44 @@ public class CustomerService {
 
     public Page<Customer> findAll(Pageable pageable) {
         LOG.info("Getting all customers with pagination, page: {} and pageSize: {}", pageable.getPageNumber(), pageable.getPageSize());
-        var customers = customerRepository.findAll(pageable);
-        return customers;
+        return customerRepository.findAll(pageable);
     }
 
     public Customer saveCustomer(Customer customer) {
-        LOG.info("Saving customer: {} ", customer.getEmail());
+        LOG.info("Saving new customer");
+        var existingCustomer = findCustomerByEmail(customer.getEmail());
+        if (existingCustomer.isPresent()) {
+            throw new InvalidInputException("Email already in use by Customer with id: " + existingCustomer.get().getId());
+        }
         return customerRepository.save(customerValidationService.validateCustomer(customer));
     }
 
     public Customer updateCustomer(Customer customer, Long id) {
-        LOG.info("Updating customer: {} ", customer.getEmail());
-        if (findCustomerByEmail(customer.getEmail()) != null) {
-            throw new InvalidInputException("Email already exists in the database. Please use a different email.");
-        }
+        LOG.info("Updating customer: {} ", customer.getId());
         var updatedCustomer = customerRepository.findById(id).orElseThrow(() -> new InvalidInputException("Customer not found with id: " + id));
         updatedCustomer.setFirstname(customer.getFirstname());
         updatedCustomer.setLastname(customer.getLastname());
-        updatedCustomer.setEmail(customer.getEmail());
         updatedCustomer.setAge(customer.getAge());
         updatedCustomer.setAddresses(customer.getAddresses());
+        if(updatedCustomer.getEmail().equalsIgnoreCase(customer.getEmail())) {
+            updatedCustomer.setEmail(customer.getEmail());
+        }
+        else {
+            var existingCustomer = findCustomerByEmail(customer.getEmail());
+            if (existingCustomer.isPresent() && (existingCustomer.get().getId() != updatedCustomer.getId())) {
+                throw new InvalidInputException("Email already in use by customer with id: " + existingCustomer.get().getId());
+            }
+            updatedCustomer.setEmail(customer.getEmail());
+        }
         return customerRepository.save(customerValidationService.validateCustomer(updatedCustomer));
     }
 
-    public Page<Customer> findCustomersByFirstname(String firstname, Pageable pageable) {
-        LOG.info("Finding customers by firstname: {}", firstname);
-        return customerRepository.findByFirstnameContaining(firstname, pageable);
+    public Page<Customer> findCustomersByFirstnameAndLastname(String firstname, String lastname, Pageable pageable) {
+        LOG.info("Finding customers by firstname: {} and lastname: {}", firstname, lastname);
+        return customerRepository.findByFirstnameLikeIgnoreCaseAndLastnameLikeIgnoreCase(firstname, lastname, pageable);
     }
 
-    public Page<Customer> findCustomersByLastname(String lastname, Pageable pageable) {
-        LOG.info("Finding customers by lastname: {}", lastname);
-        return customerRepository.findByLastnameContaining(lastname, pageable);
-    }
-
-    private Customer findCustomerByEmail(String email) {
-        LOG.info("Finding customer by email: {}", email);
-        return customerRepository.findByEmail(email).orElse(null);
+    private Optional<Customer> findCustomerByEmail(String email) {
+        return customerRepository.findByEmailIgnoreCase(email);
     }
 }

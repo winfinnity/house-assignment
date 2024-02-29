@@ -38,21 +38,19 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id,
+                                                   @RequestBody Customer customer) {
         Customer savedCustomer = customerService.updateCustomer(customer,id);
         return new ResponseEntity<>(savedCustomer, HttpStatus.OK);
     }
 
-    @GetMapping("/searchByFirstName")
-    public Page<Customer> searchCustomersByFirstName(@RequestParam String term, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
+    @GetMapping("/search")
+    public Page<Customer> searchCustomersByFirstNameAndLastName(@RequestParam(defaultValue = "%") String firstname,
+                                                                @RequestParam(defaultValue = "%") String lastname,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return customerService.findCustomersByFirstname(term, pageable);
-    }
-
-    @GetMapping("/searchByLastName")
-    public Page<Customer> searchCustomersByLastName(@RequestParam String term, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return customerService.findCustomersByLastname(term, pageable);
+        return customerService.findCustomersByFirstnameAndLastname(firstname, lastname, pageable);
     }
 
 
