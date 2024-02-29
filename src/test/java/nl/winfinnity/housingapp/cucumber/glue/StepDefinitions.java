@@ -1,6 +1,7 @@
 package nl.winfinnity.housingapp.cucumber.glue;
 
 import io.cucumber.java.After;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -17,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.data.domain.Page;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,6 +25,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.logging.log4j.LogManager.getLogger;
+import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @CucumberContextConfiguration
@@ -42,6 +43,7 @@ public class StepDefinitions {
     private String uri;
 
     private long customerId = 0L;
+    private Response response;
 
     public StepDefinitions(CustomerService customerService, DatabasePreloadService databasePreloadService) {
         this.customerService = customerService;
@@ -53,7 +55,6 @@ public class StepDefinitions {
         uri = "http://localhost:" + port;
     }
 
-    private Response response;
 
     @After
     public void cleanup() {
@@ -131,6 +132,12 @@ public class StepDefinitions {
     @When("I update John Doe with body {string}")
     public void iUpdateJohnDoeWithBodyFile(String filename) throws IOException {
         iSendAMethodRequestToEndpointWithBody("PUT", "/api/customers/" + customerId, filename);
+    }
+
+    @And("I should get error message {string}")
+    public void validateErrorMessage(String message) {
+        if (!message.isEmpty()){
+        response.then().body("errorMessage", equalTo(message));}
     }
 
     private Customer createCustomer(String firstname, String lastname, String email, int age) {

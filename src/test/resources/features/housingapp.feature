@@ -47,11 +47,13 @@ Feature: Customers endpoints
     Examples:
       | status | status2  | count | numberOfCustomers | file                               |
       | 400    | 200      | 0     | 0                 | johndoeWithoutEmailOrAddress.json |
-      | 400    | 200      | 0     | 0                 | johndoeUnderAge.json |
-      | 400    | 200      | 0     | 0                 | johndoeNoAge.json |
-      | 400    | 200      | 0     | 0                 | johnNoLastName.json |
-      | 400    | 200      | 0     | 0                 | doeNoFirstName.json |
+      | 400    | 200      | 0     | 0                 | johndoeUnderAge.json              |
+      | 400    | 200      | 0     | 0                 | johndoeNoAge.json                 |
+      | 400    | 200      | 0     | 0                 | johnNoLastName.json               |
+      | 400    | 200      | 0     | 0                 | doeNoFirstName.json               |
       | 400    | 200      | 0     | 0                 | invalid.json                      |
+      | 400    | 200      | 0     | 0                 | johndoeInvalidMail.json           |
+
 
   Scenario Outline: Add new customer twice
     Given I have <numberOfCustomers> customers in database
@@ -78,14 +80,15 @@ Feature: Customers endpoints
     Given I have John Doe and Jane Doe in the database
     When I update John Doe with body '<file>'
     Then I should get <status> status code
+    And I should get error message '<errorMessage>'
     Examples:
-      | status | file          |
-      | 400    | janedoe.json |
-      | 400    | johndoeUnderAge.json |
-      | 400    | johndoeNoAge.json     |
-      | 400    | johnNoLastName.json |
-      | 400    | doeNoFirstName.json |
-      | 400    | invalid.json                      |
+      | status | file                  | errorMessage                             |
+      | 400    | janedoe.json         | Email already in use by another customer |
+      | 400    | johndoeUnderAge.json | Age must be 18 or older                  |
+      | 400    | johndoeNoAge.json    | Age must be 18 or older                  |
+      | 400    | johnNoLastName.json  | Last name cannot be empty                |
+      | 400    | doeNoFirstName.json  | First name cannot be empty               |
+      | 400    | invalid.json         |                                  |
 
   Scenario Outline: Search customers
     Given I have John Doe and Jane Doe in the database

@@ -32,14 +32,14 @@ public class CustomerService {
         LOG.info("Saving new customer");
         var existingCustomer = findCustomerByEmail(customer.getEmail());
         if (existingCustomer.isPresent()) {
-            throw new InvalidInputException("Email already in use by Customer with id: " + existingCustomer.get().getId());
+            throw new InvalidInputException("Email already in use by another customer");
         }
         return customerRepository.save(customerValidationService.validateCustomer(customer));
     }
 
     public Customer updateCustomer(Customer customer, Long id) {
         LOG.info("Updating customer: {} ", customer.getId());
-        var updatedCustomer = customerRepository.findById(id).orElseThrow(() -> new InvalidInputException("Customer not found with id: " + id));
+        var updatedCustomer = customerRepository.findById(id).orElseThrow(() -> new InvalidInputException("Customer not found"));
         updatedCustomer.setFirstname(customer.getFirstname());
         updatedCustomer.setLastname(customer.getLastname());
         updatedCustomer.setAge(customer.getAge());
@@ -50,7 +50,7 @@ public class CustomerService {
         else {
             var existingCustomer = findCustomerByEmail(customer.getEmail());
             if (existingCustomer.isPresent() && (existingCustomer.get().getId() != updatedCustomer.getId())) {
-                throw new InvalidInputException("Email already in use by customer with id: " + existingCustomer.get().getId());
+                throw new InvalidInputException("Email already in use by another customer");
             }
             updatedCustomer.setEmail(customer.getEmail());
         }
@@ -63,6 +63,7 @@ public class CustomerService {
     }
 
     private Optional<Customer> findCustomerByEmail(String email) {
+        LOG.info("Finding customer by email: {}", email);
         return customerRepository.findByEmailIgnoreCase(email);
     }
 }

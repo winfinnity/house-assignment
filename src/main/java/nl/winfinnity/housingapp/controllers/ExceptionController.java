@@ -20,7 +20,7 @@ public class ExceptionController {
     @ExceptionHandler({InvalidInputException.class,
             HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleInvalidInputException(InvalidInputException e) {
+    public ResponseEntity<ErrorResponse> handleInvalidInputException(Exception e) {
         LOG.error("Invalid input: {} ", e.getMessage());
         return new ResponseEntity<>(ImmutableErrorResponse.builder().errorMessage(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
     }
