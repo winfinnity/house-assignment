@@ -13,10 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
     Optional<Customer> findByEmailIgnoreCase(String email);
-    Page<Customer> findByFirstnameContainingIgnoreCase(String firstname, Pageable pageable);
-    Page<Customer> findByLastnameContainingIgnoreCase(String lastname, Pageable pageable);
     Page<Customer> findByFirstnameLikeIgnoreCaseAndLastnameLikeIgnoreCase(String firstname, String lastname, Pageable pageable);
-
     @Modifying
     @Query(
             value = "truncate table customer",

@@ -1,9 +1,7 @@
 package nl.winfinnity.housingapp;
 
 import jakarta.annotation.PostConstruct;
-import nl.winfinnity.housingapp.models.Customer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
