@@ -9,4 +9,9 @@ import org.immutables.value.Value;
 @JsonSerialize(as = ImmutableErrorResponse.class)
 public interface ErrorResponse {
     String getErrorMessage();
+
+    @Value.Default
+    default String getTraceId(){
+        return "No traceId available";
+    }
 }

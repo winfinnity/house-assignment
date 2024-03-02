@@ -26,6 +26,7 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.apache.logging.log4j.LogManager.getLogger;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @CucumberContextConfiguration
@@ -137,7 +138,9 @@ public class StepDefinitions {
     @And("I should get error message {string}")
     public void validateErrorMessage(String message) {
         if (!message.isEmpty()){
-        response.then().body("errorMessage", equalTo(message));}
+        response.then().body("errorMessage", equalTo(message));
+        response.then().body("traceId", not(equalTo("No traceId available")));
+        }
     }
 
     private Customer createCustomer(String firstname, String lastname, String email, int age) {
