@@ -135,6 +135,11 @@ public class StepDefinitions {
         iSendAMethodRequestToEndpointWithBody("PUT", "/api/customers/" + customerId, filename);
     }
 
+    @When("I delete John Doe")
+    public void iDeleteJohn() {
+        iSendAMethodRequestToEndpoint("DELETE", "/api/customers/" + customerId);
+    }
+
     @And("I should get error message {string}")
     public void validateErrorMessage(String message) {
         if (!message.isEmpty()){

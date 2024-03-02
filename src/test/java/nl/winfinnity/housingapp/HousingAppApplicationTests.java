@@ -30,6 +30,4 @@ class HousingAppApplicationTests {
                 .statusCode(200);
     }
 
-
-
 }

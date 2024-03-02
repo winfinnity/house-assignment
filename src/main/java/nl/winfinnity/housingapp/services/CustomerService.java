@@ -57,6 +57,13 @@ public class CustomerService {
         return customerRepository.save(customerValidationService.validateCustomer(updatedCustomer));
     }
 
+    public Customer deleteCustomer(Long id) {
+        LOG.info("Deleting customer with id: {}", id);
+        var customer = customerRepository.findById(id).orElseThrow(() -> new InvalidInputException("Customer not found"));
+        customerRepository.delete(customer);
+        return customer;
+    }
+
     public Page<Customer> findCustomersByFirstnameAndLastname(String firstname, String lastname, Pageable pageable) {
         LOG.info("Finding customers by firstname: {} and lastname: {}", firstname, lastname);
         return customerRepository.findByFirstnameLikeIgnoreCaseAndLastnameLikeIgnoreCase(firstname, lastname, pageable);

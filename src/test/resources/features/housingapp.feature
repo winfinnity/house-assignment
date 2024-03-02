@@ -104,5 +104,31 @@ Feature: Customers endpoints
       |                                | 200    | 2     |
       | ?firstname=donotexist           | 200    | 0     |
 
+ Scenario Outline: Delete customer
+    Given I have John Doe and Jane Doe in the database
+    When I delete John Doe
+    Then I should get <status> status code
+    When I send a 'GET' request to '/api/customers'
+    Then I should get <status2> status code
+    Then the customers returned should be <count>
+    Examples:
+      | status | status2 | count |
+      | 200    | 200     | 1     |
 
+  Scenario Outline: Delete customer non existing customer
+    Given I have John Doe and Jane Doe in the database
+    When I send a 'DELETE' request to '/api/customers/99999'
+    Then I should get <status> status code
+    And I should get error message '<errorMessage>'
+    Examples:
+      | status | errorMessage       |
+      | 400    | Customer not found |
+
+  Scenario Outline: 500 error
+    When I send a 'GET' request to '/api/customers/99999'
+    Then I should get <status> status code
+    And I should get error message '<errorMessage>'
+    Examples:
+      | status | errorMessage       |
+      | 500    | Something went wrong |
 
